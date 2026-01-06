@@ -13,9 +13,10 @@ import StopScreenShareIcon from "@mui/icons-material/StopScreenShare";
 import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
+import server from "../../../production";
 // import server from '../environment';
 
-const server_url = "http://localhost:3000";
+const server_url = server;
 
 var connections = {};
 
@@ -387,8 +388,9 @@ export default function VideoMeetComponent() {
                 stream: event.stream,
                 autoplay: true,
                 playsinline: true,
+                username,
               };
-
+              console.log(newVideo);
               setVideos((videos) => {
                 const updatedVideos = [...videos, newVideo];
                 videoRef.current = updatedVideos;
@@ -532,7 +534,24 @@ export default function VideoMeetComponent() {
             </div>
             <div className={styles.previewContainer || ""}>
               <video ref={localVideoref} autoPlay muted />
-              <div className={styles.previewLabel || ""}>Preview</div>
+              <div className={styles.previewLableAndBottonContainer}>
+                <div className={styles.previewLabel || ""}>Preview</div>
+                <div className={styles.previewBottons}>
+                  <IconButton
+                    onClick={handleAudio}
+                    className={audio ? styles.iconBtn : styles.endCallBtn}
+                  >
+                    {audio ? <MicIcon /> : <MicOffIcon />}
+                  </IconButton>
+
+                  <IconButton
+                    onClick={handleVideo}
+                    className={video ? styles.iconBtn : styles.endCallBtn}
+                  >
+                    {video ? <VideocamIcon /> : <VideocamOffIcon />}
+                  </IconButton>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -563,7 +582,7 @@ export default function VideoMeetComponent() {
                     />
                   )}
                   <div className={styles.nameTag}>
-                    {activeVideoId === "local" ? "You" : username}
+                    {activeVideoId !== "local" ? username : `${username}(You)`}
                   </div>
                 </div>
               }
@@ -588,7 +607,9 @@ export default function VideoMeetComponent() {
                       }}
                       autoPlay
                     />
-                    <div className={styles.nameTag}>{username}</div>
+                    <div className={styles.nameTag}>
+                      {activeVideoId !== "local" ? username : `${username}(You)`}
+                    </div>
                   </div>
                 ))}
               </div>
